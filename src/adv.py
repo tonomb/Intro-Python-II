@@ -35,10 +35,10 @@ room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
 
-print(room['foyer'])
-print(room['foyer'].n_to)
-print(room['foyer'].s_to)
-print(room['foyer'].e_to)
+# print(room['foyer'])
+# print(room['foyer'].n_to)
+# print(room['foyer'].s_to)
+# print(room['foyer'].e_to)
 
 
 #
@@ -65,9 +65,53 @@ player1 = Player(player_name, room["outside"])
 # If the user enters "q", quit the game.
 playing = True
 
+# while playing:
+#     print(player1)
+#     print()
+#     direction = input("\nWhere do you want to move ?  [n] north, [s] south, [e] east, [w] west, [q] quit ...: ")
+
+#     if direction == "q":
+#         print('Thank you for playing, come again soon')
+#         playing = False
+#     elif direction == "n":
+#         print("\n ===moving North=== \n")
+#         if player1.current_room.name == "Outside Cave Entrance":
+#             player1.current_room = room["foyer"]
+#         elif player1.current_room.name == "Foyer":
+#             player1.current_room = room["overlook"]
+#         elif player1.current_room.name == 'Narrow Passage':
+#             player1.current_room = room["treasure"]
+#         else:
+#             print("There is no room in that direction \n")
+#     elif direction == "s":
+#         print("\n ===moving South===\n")
+#         if player1.current_room.name == "Foyer":
+#             player1.current_room = room["outside"]
+#         elif player1.current_room.name == "Grand Overlook":
+#             player1.current_room = room["foyer"]
+#         elif player1.current_room.name == 'Treasure Chamber':
+#             player1.current_room = room["narrow"]
+#         else:
+#             print("There is no room in that direction \n")
+#     elif direction == "e":
+#         print("\n ===moving East===\n")
+#         if player1.current_room.name == "Foyer":
+#             player1.current_room = room["narrow"]
+#         else:
+#             print("There is no room in that direction \n")
+#     elif direction == "w":
+#         print("\n ===moving West=== \n")
+#         if player1.current_room.name == "Narrow Passage":
+#             player1.current_room = room["foyer"]
+#         else:
+#             print("There is no room in that direction\n")
+#     else:
+#         print("\nYou Can only move [n] north, [s] south, [e] east, [w] west, [q] quit.  Where do you want to move ?      ")
+
 while playing:
     print(player1)
     print()
+
     direction = input("\nWhere do you want to move ?  [n] north, [s] south, [e] east, [w] west, [q] quit ...: ")
 
     if direction == "q":
@@ -75,35 +119,27 @@ while playing:
         playing = False
     elif direction == "n":
         print("\n ===moving North=== \n")
-        if player1.current_room.name == "Outside Cave Entrance":
-            player1.current_room = room["foyer"]
-        elif player1.current_room.name == "Foyer":
-            player1.current_room = room["overlook"]
-        elif player1.current_room.name == 'Narrow Passage':
-            player1.current_room = room["treasure"]
-        else:
+        try:
+            player1.current_room = player1.current_room.n_to
+        except AttributeError:
             print("There is no room in that direction \n")
     elif direction == "s":
         print("\n ===moving South===\n")
-        if player1.current_room.name == "Foyer":
-            player1.current_room = room["outside"]
-        elif player1.current_room.name == "Grand Overlook":
-            player1.current_room = room["foyer"]
-        elif player1.current_room.name == 'Treasure Chamber':
-            player1.current_room = room["narrow"]
-        else:
+        try:
+            player1.current_room = player1.current_room.s_to
+        except AttributeError:
             print("There is no room in that direction \n")
     elif direction == "e":
         print("\n ===moving East===\n")
-        if player1.current_room.name == "Foyer":
-            player1.current_room = room["narrow"]
-        else:
+        try:
+            player1.current_room = player1.current_room.e_to
+        except AttributeError:
             print("There is no room in that direction \n")
     elif direction == "w":
         print("\n ===moving West=== \n")
-        if player1.current_room.name == "Narrow Passage":
-            player1.current_room = room["foyer"]
-        else:
-            print("There is no room in that direction\n")
+        try:
+            player1.current_room = player1.current_room.w_to
+        except AttributeError:
+            print("There is no room in that direction \n")
     else:
         print("\nYou Can only move [n] north, [s] south, [e] east, [w] west, [q] quit.  Where do you want to move ?      ")
