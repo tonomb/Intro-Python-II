@@ -5,6 +5,17 @@ class Room:
     def __init__(self, name, description):
         self.name = name
         self.description = description
+        self.items = [ ]
 
     def __str__(self):
-        return f"{self.name}:\n{self.description}"
+        return f"{self.name}:\n\n{self.description}"
+
+    def print_items(self):
+        for item in self.items:
+            print(f"\t{item.name} - {item.description}")
+    
+    def remove_item(self, item):
+        self.items.remove(item)
+
+    def add_item(self, item):
+        self.items.append(item)

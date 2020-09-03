@@ -1,5 +1,7 @@
+import os
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -34,11 +36,14 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# adding items to rooms
 
-# print(room['foyer'])
-# print(room['foyer'].n_to)
-# print(room['foyer'].s_to)
-# print(room['foyer'].e_to)
+room["outside"].items.append(Item("Torch", "Lights up the darkest places"))
+room["foyer"].items.append(Item("Shield", "level 1"))
+room["foyer"].items.append(Item("Sword", "The sword of the last kings"))
+room["overlook"].items.append(Item("Bow", "This bow never misses it´s target"))
+room["narrow"].items.append(Item("Wand", "This item doesn´t belong in this fantasy"))
+room["treasure"].items.append(Item("Ring", "Forged in the fires of mount doom"))
 
 
 #
@@ -47,8 +52,8 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
-player_name = input('Who dares seek the treasure?  ')
-# player_name = "wade watts"
+# player_name = input('Who dares seek the treasure?  ')
+player_name = "wade watts"
 player1 = Player(player_name, room["outside"])
 
 
@@ -65,81 +70,89 @@ player1 = Player(player_name, room["outside"])
 # If the user enters "q", quit the game.
 playing = True
 
-# while playing:
-#     print(player1)
-#     print()
-#     direction = input("\nWhere do you want to move ?  [n] north, [s] south, [e] east, [w] west, [q] quit ...: ")
-
-#     if direction == "q":
-#         print('Thank you for playing, come again soon')
-#         playing = False
-#     elif direction == "n":
-#         print("\n ===moving North=== \n")
-#         if player1.current_room.name == "Outside Cave Entrance":
-#             player1.current_room = room["foyer"]
-#         elif player1.current_room.name == "Foyer":
-#             player1.current_room = room["overlook"]
-#         elif player1.current_room.name == 'Narrow Passage':
-#             player1.current_room = room["treasure"]
-#         else:
-#             print("There is no room in that direction \n")
-#     elif direction == "s":
-#         print("\n ===moving South===\n")
-#         if player1.current_room.name == "Foyer":
-#             player1.current_room = room["outside"]
-#         elif player1.current_room.name == "Grand Overlook":
-#             player1.current_room = room["foyer"]
-#         elif player1.current_room.name == 'Treasure Chamber':
-#             player1.current_room = room["narrow"]
-#         else:
-#             print("There is no room in that direction \n")
-#     elif direction == "e":
-#         print("\n ===moving East===\n")
-#         if player1.current_room.name == "Foyer":
-#             player1.current_room = room["narrow"]
-#         else:
-#             print("There is no room in that direction \n")
-#     elif direction == "w":
-#         print("\n ===moving West=== \n")
-#         if player1.current_room.name == "Narrow Passage":
-#             player1.current_room = room["foyer"]
-#         else:
-#             print("There is no room in that direction\n")
-#     else:
-#         print("\nYou Can only move [n] north, [s] south, [e] east, [w] west, [q] quit.  Where do you want to move ?      ")
 
 while playing:
-    print(player1)
+    # os.system('clear')
+    player1.location()
+    print()
+    if len(player1.current_room.items) > 0:
+        print(f"You see {len(player1.current_room.items)} items\n")
+        player1.current_room.print_items()
+    else:
+        print("There are no items in this room")
     print()
 
-    direction = input("\nWhere do you want to move ?  [n] north, [s] south, [e] east, [w] west, [q] quit ...: ")
 
-    if direction == "q":
+
+    full_command = input("\nWhat would you like to do?---->  ")
+
+    split_command = full_command.split()
+    command = split_command[0]
+    # movement
+    if command == "q":
         print('Thank you for playing, come again soon')
         playing = False
-    elif direction == "n":
+    elif command == "n":
         print("\n ===moving North=== \n")
         try:
             player1.current_room = player1.current_room.n_to
         except AttributeError:
             print("There is no room in that direction \n")
-    elif direction == "s":
+    elif command == "s":
         print("\n ===moving South===\n")
         try:
             player1.current_room = player1.current_room.s_to
         except AttributeError:
             print("There is no room in that direction \n")
-    elif direction == "e":
+    elif command == "e":
         print("\n ===moving East===\n")
         try:
             player1.current_room = player1.current_room.e_to
         except AttributeError:
             print("There is no room in that direction \n")
-    elif direction == "w":
+    elif command == "w":
         print("\n ===moving West=== \n")
         try:
             player1.current_room = player1.current_room.w_to
         except AttributeError:
             print("There is no room in that direction \n")
+    # actions
+    elif command == 'take':
+        if len(split_command) == 2:
+            item = split_command[1]
+            if len(player1.current_room.items) > 0:
+                for room_item in player1.current_room.items:
+                    if room_item.name.lower() == item.lower():
+                        player1.take_item(room_item)
+                        print(f"you have picked up the {room_item.name}")
+                        player1.current_room.remove_item(room_item)
+                    else:
+                        print("That items does not exist in this room")
+            else:
+                print("That items does not exist in this room 2")
+
+        else:
+            print("\nThat is not a valid command")
+    elif command == 'drop':
+        if len(split_command) == 2:
+            item = split_command[1]
+            if len(player1.inventory) > 0:
+                for player_item in player1.inventory:
+                    if player_item.name.lower() == item.lower():
+                        player1.drop_item(player_item)
+                        print(f"you have dropped the {player_item.name}")
+                        player1.current_room.add_item(player_item)
+                    else:
+                        print("That items does not exist in your inventory")
+            else:
+                print("That items does not exist in your inventory")
+        else:
+            print("\nThat is not a valid command")
+
+    # other
+    elif command == 'i':
+        player1.list_inventory()
+    elif command == 'h':
+        print(f"==== HELP ==== \nMove: [n] north, [s] south, [e] east, [w] west \nAction: [take] item [drop] item \n[i] inventory [h] help, [q] quit")
     else:
-        print("\nYou Can only move [n] north, [s] south, [e] east, [w] west, [q] quit.  Where do you want to move ?      ")
+        print("\nThat is not a valid command. Would you like some [h] help?")
