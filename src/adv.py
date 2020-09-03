@@ -7,7 +7,7 @@ from item import Item
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons, There is a mysterious land to the south. Only with the power of the ring can you enter"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -22,6 +22,12 @@ to north. The smell of gold permeates the air."""),
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
+
+    'morodor': Room("Morodor", """You've entered the relm of sauron, head further south ro reach mount Doom"""),
+
+    'mountain': Room("Mount Doom", """You've entered Mount Doom, It was here that Sauron forged the One Ring"""),
+
+    'hogwarts': Room("Hogwarts Castle", """Your a wizard!!!! I hope you have your wand with you, It´s not safe"""),
 }
 
 
@@ -35,6 +41,7 @@ room['overlook'].s_to = room['foyer']
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
+room['morodor'].s_to = room['mountain']
 
 # adding items to rooms
 
@@ -84,10 +91,25 @@ while playing:
 
 
 
+    if player1.current_room.name == 'Mount Doom':
+        decision = input('Would you like to cast the ring into the fire ? [y] yes [n] no...: ')
+        if decision == 'y':
+            print('You have destoyed the ring')
+            playing = False
+        elif decision =='n':
+            print('May the odds be in your favor')
+            player1.move(room['hogwarts'])
+        else:
+            print('That is not a valid decision')
+    else:
+        pass
+
     full_command = input("\nWhat would you like to do?---->  ")
 
     split_command = full_command.split()
     command = split_command[0]
+
+    
     # movement
     if command == "q":
         print('Thank you for playing, come again soon')
@@ -95,25 +117,25 @@ while playing:
     elif command == "n":
         print("\n ===moving North=== \n")
         try:
-            player1.current_room = player1.current_room.n_to
+            player1.move(player1.current_room.n_to)
         except AttributeError:
             print("There is no room in that direction \n")
     elif command == "s":
         print("\n ===moving South===\n")
         try:
-            player1.current_room = player1.current_room.s_to
+            player1.move(player1.current_room.s_to)
         except AttributeError:
             print("There is no room in that direction \n")
     elif command == "e":
         print("\n ===moving East===\n")
         try:
-            player1.current_room = player1.current_room.e_to
+            player1.move(player1.current_room.e_to)
         except AttributeError:
             print("There is no room in that direction \n")
     elif command == "w":
         print("\n ===moving West=== \n")
         try:
-            player1.current_room = player1.current_room.w_to
+            player1.move(player1.current_room.w_to)
         except AttributeError:
             print("There is no room in that direction \n")
     # actions
@@ -126,11 +148,16 @@ while playing:
                         player1.take_item(room_item)
                         print(f"you have picked up the {room_item.name}")
                         player1.current_room.remove_item(room_item)
+                        if room_item.name.lower() == 'ring':
+                            player1.move(room['outside'])
+                            print("\nA magic land appears south")
+                            room['outside'].s_to = room['morodor']
+                        else:
+                            pass
                     else:
                         print("That items does not exist in this room")
             else:
                 print("That items does not exist in this room 2")
-
         else:
             print("\nThat is not a valid command")
     elif command == 'drop':
@@ -154,5 +181,8 @@ while playing:
         player1.list_inventory()
     elif command == 'h':
         print(f"==== HELP ==== \nMove: [n] north, [s] south, [e] east, [w] west \nAction: [take] item [drop] item \n[i] inventory [h] help, [q] quit")
+
+    # room mechanics
+
     else:
         print("\nThat is not a valid command. Would you like some [h] help?")

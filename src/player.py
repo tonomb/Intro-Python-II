@@ -10,6 +10,9 @@ class Player:
     def __str__(self):
         return f"{self.name} \nyou are at the {self.current_room}"
 
+    def move(self, room):
+        self.current_room = room
+
     def take_item(self, item):
         self.inventory.append(item)
 
